@@ -1,0 +1,8 @@
+.idea/
+/venv
+pycache/
+*.log
+*.db
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
