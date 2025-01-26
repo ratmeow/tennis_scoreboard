@@ -6,7 +6,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 from src.dao import Base
 from src.config import settings
-from src.models import Player, Match
+from src.models import PlayerORM, MatchORM
 
 from alembic import context
 

@@ -1,2 +1,2 @@
-from .match import Match
-from .player import Player
+from .match import MatchORM
+from .player import PlayerORM
