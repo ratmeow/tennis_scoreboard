@@ -9,8 +9,18 @@ class CreateMatchRequest(BaseModel):
 
 
 class GetMatchesRequest(BaseModel):
-    page: int = 1
+    page_number: int = 1
     filter_by_player_name: str = ""
+    finished: bool = False
+    ongoing: bool = False
+
+
+class MatchesFilters(BaseModel):
+    limit: int = -1
+    offset: int = 0
+    player_name: Optional[str] = None
+    finished: bool
+    ongoing: bool
 
 
 class Score(BaseModel):

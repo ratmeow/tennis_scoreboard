@@ -1,35 +1,8 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tennis Scoreboard | Completed Match</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
-
-    <script src="{{ url_for('static', path='js/app.js') }}"></script>
-</head>
+<!DOCTYPE html>
+<html lang="en">
+{% include "head.html" %}
 <body>
-<header class="header">
-    <section class="nav-header">
-        <div class="brand">
-            <div class="nav-toggle">
-                <img src="{{ url_for('static', path='images/menu.png') }}" alt="Logo" class="logo">
-            </div>
-            <span class="logo-text">TennisScoreboard</span>
-        </div>
-        <div>
-            <nav class="nav-links">
-                <a class="nav-link" href="/">Home</a>
-                <a class="nav-link" href="#">Matches</a>
-            </nav>
-        </div>
-    </section>
-</header>
+{% include "header.html" %}
 <main>
     <div class="container">
         <h1>Completed Match</h1>
@@ -62,11 +35,6 @@
         </section>
     </div>
 </main>
-<footer>
-    <div class="footer">
-        <p>&copy; Tennis Scoreboard, project from <a href="https://zhukovsd.github.io/java-backend-learning-course/">zhukovsd/java-backend-learning-course</a>
-            roadmap.</p>
-    </div>
-</footer>
+{% include "footer.html" %}
 </body>
 </html>

@@ -276,7 +276,7 @@ footer {
 }
 
 .winner {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(255, 165, 0, 0.4);
 }
 
 .player1 td, .player2 td {
@@ -477,12 +477,26 @@ footer {
     border-right: none;
 }
 
-.winner-name-td {
+.ongoing-td {
     background-color: #dddddd;
     display: block;
     width: 38%;
     margin: 0 auto;
     border-radius: 18px;
+    font-size: 25px;
+}
+
+.winner-name-td {
+    background-color: rgba(255, 165, 0, 0.4);
+    display: block;
+    width: 38%;
+    margin: 0 auto;
+    border-radius: 18px;
+    font-size: 25px;
+}
+
+.table-matches td {
+    font-size: 25px;
 }
 
 .prev, .next {
@@ -511,3 +525,14 @@ footer {
 .num-page.current {
     font-weight: bold;
 }
+
+.btn-reset {
+    width: 180px;
+    line-height: 45px;
+    margin-left: 20px;
+    border-radius: 18px;
+    border: none;
+    background-color: rgba(255, 0, 0, 0.6);
+    color: #fff;
+    cursor: pointer;
+    }

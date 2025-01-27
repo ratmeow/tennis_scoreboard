@@ -2,7 +2,7 @@ from typing import Annotated
 from fastapi import APIRouter, Form, Path, Query, Request
 from fastapi.responses import RedirectResponse
 from src.schemas import CreateMatchRequest, GetMatchesRequest
-from src.services import MatchService
+from src.services import MatchService, PlayerService
 from src.utils import WinnerAlreadyExists
 from src import templates
 
@@ -44,6 +44,15 @@ async def update_match_api(uuid: str, player_win: Annotated[int, Form()]):
     return RedirectResponse(url=f"/{redirect_url}/?uuid={uuid}", status_code=303)
 
 
-@router.get("/matches")
-async def get_player_matches_api(request: Annotated[GetMatchesRequest, Query()]):
-    pass
+@router.get("/matches/")
+async def get_matches_api(request: Request, match_filters: Annotated[GetMatchesRequest, Query()]):
+    print(match_filters)
+    matches = await MatchService.get_matches_service(match_filters=match_filters)
+    total_pages = await MatchService.get_matches_pages_service(match_filters=match_filters)
+    print(match_filters.page_number)
+    return templates.TemplateResponse(name="matches.html",
+                                      context={"request": request,
+                                               "matches": [match.dict() for match in matches],
+                                               "page_number": match_filters.page_number,
+                                               "total_pages": total_pages,
+                                               "match_filters": match_filters})

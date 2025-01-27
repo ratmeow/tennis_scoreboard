@@ -1,7 +1,8 @@
-from src.schemas import Match, Score
+from src.schemas import Match, Score, MatchesFilters
 from src.models import MatchORM
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update
+from sqlalchemy.sql import func
 from .database import connection
 
 
@@ -28,8 +29,37 @@ class MatchDAO:
 
     @staticmethod
     @connection
-    async def get_matches_by_player(player_name: str, session: AsyncSession):
-        pass
+    async def get_matches(filters: MatchesFilters,
+                          session: AsyncSession) -> list[MatchORM]:
+
+        query = select(MatchORM).limit(limit=filters.limit).offset(offset=filters.offset)
+        if filters.player_name:
+            query = query.where((MatchORM.player1.has(name=filters.player_name)) | (MatchORM.player2.has(name=filters.player_name)))
+        if filters.finished != filters.ongoing:
+            if filters.finished:
+                query = query.where(MatchORM.winner_id.isnot(None))
+            else:
+                query = query.where(MatchORM.winner_id.is_(None))
+
+        result = await session.execute(query)
+
+        matches = list(result.scalars().all())
+        return matches
+
+    @staticmethod
+    @connection
+    async def get_matches_count(filters: MatchesFilters, session: AsyncSession) -> int:
+        query = select(func.count()).select_from(MatchORM)
+        if filters.player_name:
+            query = query.where((MatchORM.player1.has(name=filters.player_name)) | (MatchORM.player2.has(name=filters.player_name)))
+        if filters.finished != filters.ongoing:
+            if filters.finished:
+                query = query.where(MatchORM.winner_id.isnot(None))
+            else:
+                query = query.where(MatchORM.winner_id.is_(None))
+        result = await session.execute(query)
+        count = result.scalar()
+        return count
 
     @staticmethod
     @connection

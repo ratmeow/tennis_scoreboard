@@ -1,10 +1,13 @@
-from src.schemas import CreateMatchRequest, Match, MatchResponse
+from src.schemas import CreateMatchRequest, Match, MatchResponse, MatchesFilters, GetMatchesRequest
 from src.services import PlayerService
 from src.dao import MatchDAO
 from src.match_manager.match_observer import MatchObserver
+from math import ceil
 
 
 class MatchService:
+    matches_at_page: int = 5
+
     @staticmethod
     async def add_match_service(match_data: CreateMatchRequest) -> MatchResponse:
         player1 = await PlayerService.get_or_add_player(name=match_data.player1_name)
@@ -38,5 +41,25 @@ class MatchService:
         await MatchDAO.update_match(match_uuid=match_uuid, match_data=match)
         return match
 
+    @classmethod
+    async def get_matches_service(cls, match_filters: GetMatchesRequest) -> list[Match]:
+        player_name = match_filters.filter_by_player_name if len(match_filters.filter_by_player_name) > 0 else None
+        offset = (match_filters.page_number - 1) * cls.matches_at_page
+        filters = MatchesFilters(limit=cls.matches_at_page,
+                                 offset=offset,
+                                 player_name=player_name,
+                                 finished=match_filters.finished,
+                                 ongoing=match_filters.ongoing)
 
-# не работает winner
+        matches_orm = await MatchDAO.get_matches(filters=filters)
+
+        matches = [Match.from_orm(match) for match in matches_orm]
+        return matches
+
+    @classmethod
+    async def get_matches_pages_service(cls, match_filters: GetMatchesRequest) -> int:
+        filters = MatchesFilters(player_name=match_filters.filter_by_player_name,
+                                 finished=match_filters.finished,
+                                 ongoing=match_filters.ongoing)
+        count = await MatchDAO.get_matches_count(filters)
+        return ceil(count / cls.matches_at_page)
