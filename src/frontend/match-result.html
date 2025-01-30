@@ -19,13 +19,13 @@
                 </thead>
                 <tbody>
                 <tr class="player1 {% if match.winner.id == match.player1.id %}winner{% endif %}">
-                    <td class="table-text">{{ match.player1.name }}</td>
+                    <td class="table-text">{{ match.player1.name|title }}</td>
                     {% for game_num in range(match.score.games|length) %}
                     <td class="table-text">{{ match.score.games[game_num][0] }}</td>
                     {% endfor %}
                 </tr>
                 <tr class="player2 {% if match.winner.id == match.player2.id %}winner{% endif %}">
-                    <td class="table-text">{{ match.player2.name }}</td>
+                    <td class="table-text">{{ match.player2.name|title }}</td>
                     {% for game_num in range(match.score.games|length) %}
                     <td class="table-text">{{ match.score.games[game_num][1] }}</td>
                     {% endfor %}

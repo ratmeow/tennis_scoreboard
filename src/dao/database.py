@@ -1,7 +1,9 @@
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from src.config import settings
+import logging
 
+logger = logging.getLogger(__name__)
 engine = create_async_engine(url=settings.DB_URL)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
@@ -13,7 +15,8 @@ def connection(method):
                 return await method(*args, session=session, **kwargs)
             except Exception as e:
                 await session.rollback()
-                raise e
+                logger.error(e)
+                raise
             finally:
                 await session.close()
 

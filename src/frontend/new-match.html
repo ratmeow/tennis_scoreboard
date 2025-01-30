@@ -10,13 +10,19 @@
             <div class="new-match-image"></div>
             <div class="form-container center">
                 <form method="post" action="">
-                    <p style="color: red;">Sample error message</p>
+                    {% if error %}
+                    <span class="error-message">{{ error }}</span>
+                    {% endif %}
                     <label class="label-player" for="playerOne">Player one</label>
                     <input class="input-player" name="playerOne" placeholder="Name" type="text" required
                            title="Enter a name">
                     <label class="label-player" for="playerTwo">Player two</label>
                     <input class="input-player" name="playerTwo" placeholder="Name" type="text" required
                            title="Enter a name">
+                    <label>
+                        <input type="checkbox" name="is_best_of_five" value="true">
+                        Best of 5
+                    </label>
                     <input class="form-button" type="submit" value="Start">
                 </form>
             </div>

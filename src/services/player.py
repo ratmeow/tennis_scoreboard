@@ -1,7 +1,6 @@
 from src.dao import PlayerDAO
 from typing import Optional
 from src.schemas import Player
-from src.utils import DatabaseNotFoundError, UniqueError
 
 
 class PlayerService:
@@ -12,7 +11,7 @@ class PlayerService:
 
     @staticmethod
     async def get_player_service(name: str) -> Optional[Player]:
-        player_db = await PlayerDAO.get_player(name=name)
+        player_db = await PlayerDAO.get_player_or_none(name=name)
         return Player.from_orm(player_db) if player_db else None
 
     @classmethod

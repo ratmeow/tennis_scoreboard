@@ -1,1 +1,1 @@
-from .exceptions import DatabaseNotFoundError, UniqueError, WinnerAlreadyExists
+from .exceptions import DatabaseNotFoundError, WinnerAlreadyExists

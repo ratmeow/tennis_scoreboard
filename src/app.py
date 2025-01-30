@@ -1,11 +1,11 @@
-from src.endpoints import player_router, match_router
+from src.endpoints import match_router
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from src import templates
 
 app = FastAPI()
-app.include_router(player_router)
+
 app.include_router(match_router)
 
 app.add_middleware(

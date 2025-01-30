@@ -11,11 +11,11 @@ class Points:
 
     def add(self, player_idx):
         if self.tiebreak_mode:
-            self.add_tiebreak(player_idx=player_idx)
+            self._add_tiebreak(player_idx=player_idx)
         else:
-            self.add_common(player_idx=player_idx)
+            self._add_common(player_idx=player_idx)
 
-    def add_common(self, player_idx):
+    def _add_common(self, player_idx):
         opponent_idx = 1 - player_idx
 
         if self.positions[player_idx] < 3:
@@ -32,7 +32,7 @@ class Points:
             self.game_win = True
             return
 
-    def add_tiebreak(self, player_idx):
+    def _add_tiebreak(self, player_idx):
         opponent_idx = 1 - player_idx
         self.points[player_idx] += 1
         if self.points[player_idx] >= 7 and (self.points[player_idx] - self.points[opponent_idx]) >= 2:
@@ -91,7 +91,7 @@ class Sets:
 
     def add(self, player_idx):
         self.sets[player_idx] += 1
-        if self.sets[player_idx] == (self.num_sets - 1):
+        if self.sets[player_idx] == (self.num_sets // 2) + 1:
             self.match_win = True
 
     def is_match_win(self) -> bool:

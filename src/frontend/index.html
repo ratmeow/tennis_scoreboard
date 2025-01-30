@@ -5,6 +5,9 @@
 {% include "header.html" %}
 <main>
     <div class="container">
+        {% if error %}
+        <span class="error-message">{{ error }}</span>
+        {% endif %}
         <h1>Welcome to Tennis Scoreboard</h1>
         <p>Manage your tennis matches, record results, and track rankings</p>
         <div class="welcome-image"></div>

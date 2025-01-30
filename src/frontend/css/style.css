@@ -536,3 +536,7 @@ footer {
     color: #fff;
     cursor: pointer;
     }
+
+.error-message {
+        color: red;
+    }
