@@ -18,19 +18,15 @@ def database_error_handler(method):
     def wrapper(environ, start_response, *args, **kwargs):
         try:
             return method(environ, start_response, *args, **kwargs)
-        except DatabaseNotFoundError as e:
+        except (DatabaseNotFoundError, DatabaseInternalError) as e:
+            status = "500"
+            if isinstance(e, DatabaseNotFoundError):
+                status = "404"
             return renderer.render_template(
                 template_name="index.html",
                 context={"error": e.message},
                 start_response=start_response,
-                status="404",
-            )
-        except DatabaseInternalError as e:
-            return renderer.render_template(
-                template_name="index.html",
-                context={"error": e.message},
-                start_response=start_response,
-                status="500",
+                status=status,
             )
 
     return wrapper
