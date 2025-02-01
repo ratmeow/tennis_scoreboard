@@ -20,8 +20,11 @@ class WSGIApp:
                 content_type = "text/css"
             elif full_path.endswith(".js"):
                 content_type = "application/javascript"
-
-            start_response("200 OK", [("Content-Type", content_type)])
+            headers = [
+                ("Content-Type", content_type),
+                ("Cache-Control", "public, max-age=86400")
+            ]
+            start_response("200 OK", headers)
             with open(full_path, "rb") as f:
                 return [f.read()]
 
