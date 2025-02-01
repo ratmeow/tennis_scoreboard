@@ -1,24 +1,8 @@
-from src.endpoints import match_router
-from fastapi import FastAPI, Request
-from fastapi.staticfiles import StaticFiles
-from fastapi.middleware.cors import CORSMiddleware
-from src import templates
+from src.endpoints.match import router as match_router
+from src.server.wsgi import WSGIApp
+from src.server.middlewares import CORSMiddleware, log_request_middleware
 
-app = FastAPI()
+app = WSGIApp(router=match_router, static_dir="src/frontend")
 
-app.include_router(match_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.mount("/static", StaticFiles(directory="src/frontend"), name="static")
-
-
-@app.get("/")
-async def get_root(request: Request):
-    return templates.TemplateResponse(name="index.html", context={"request": request})
+app.add_middleware(CORSMiddleware)
+app.add_middleware(log_request_middleware)

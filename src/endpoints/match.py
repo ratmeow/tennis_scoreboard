@@ -1,92 +1,125 @@
-from typing import Annotated
-from fastapi import APIRouter, Form, Query, Request, HTTPException
-from fastapi.responses import RedirectResponse
+from src.server.router import Router
+
 from src.schemas import CreateMatchRequest, GetMatchesRequest, GetMatchesResponse
 from src.services import MatchService
-from src import templates
 from src.utils.exceptions import DatabaseInternalError, ServiceValidationError, DatabaseNotFoundError
 from src.utils.validator import FieldValidator
 
-router = APIRouter(tags=["match"])
+from src.utils.parser import Parser
+from src.server.renderer import Renderer
+
+router = Router()
+renderer = Renderer(templates_dir="src/frontend")
 
 
-@router.post("/new-match")
-async def add_match_api(request: Request, match_data: Annotated[CreateMatchRequest, Form()]):
-    try:
-        FieldValidator.validate_player_names(player1_name=match_data.player1_name,
-                                             player2_name=match_data.player2_name)
+def database_error_handler(method):
+    def wrapper(environ, start_response, *args, **kwargs):
+        try:
+            return method(environ, start_response, *args, **kwargs)
+        except DatabaseNotFoundError as e:
+            return renderer.render_template(template_name="index.html",
+                                            context={"error": e.message},
+                                            start_response=start_response,
+                                            status="404")
+        except DatabaseInternalError as e:
+            return renderer.render_template(template_name="index.html",
+                                            context={"error": e.message},
+                                            start_response=start_response,
+                                            status="500")
 
-        match = await MatchService.add_match_service(match_data=match_data)
+    return wrapper
 
-        return RedirectResponse(url=f"/match-score/?uuid={match.uuid}", status_code=303)
 
-    except ServiceValidationError as e:
-        return templates.TemplateResponse(name="new-match.html", context={"request": request, "error": e.message})
-    except DatabaseInternalError as e:
-        raise HTTPException(status_code=500, detail=e.message)
+@router.get("/")
+def get_root(environ, start_response):
+    return renderer.render_template(template_name="index.html", start_response=start_response)
 
 
 @router.get("/new-match")
-async def get_new_match_api(request: Request):
-    return templates.TemplateResponse(name="new-match.html", context={"request": request})
+def get_new_match_api(environ, start_response):
+    return renderer.render_template(template_name="new-match.html", start_response=start_response)
+
+
+@router.post("/new-match")
+@database_error_handler
+def add_match_api(environ, start_response):
+    raw_data = Parser.parse_form_data(environ=environ)
+    match_data = CreateMatchRequest(**raw_data)
+    try:
+
+        FieldValidator.validate_player_names(player1_name=match_data.player1_name,
+                                             player2_name=match_data.player2_name)
+
+        match = MatchService.add_match_service(match_data=match_data)
+
+        start_response("303 See Other", [("Location", f"/match-score/?uuid={match.uuid}")])
+        return []
+
+    except ServiceValidationError as e:
+        return renderer.render_template(template_name="new-match.html",
+                                        context={"error": e.message},
+                                        start_response=start_response)
 
 
 @router.get("/match-score/")
-async def get_match_api(request: Request, uuid: str):
-    try:
-        match = await MatchService.get_match_service(match_uuid=uuid)
-        if match.winner:
-            return RedirectResponse(url=f"/match-result/?uuid={uuid}")
-        return templates.TemplateResponse(name="match-score.html", context={"request": request, "match": match.dict()})
-    except DatabaseNotFoundError as e:
-        return templates.TemplateResponse(name="index.html", context={"request": request, "error": e.message})
-    except DatabaseInternalError as e:
-        raise HTTPException(status_code=500, detail=e.message)
+@database_error_handler
+def get_match_api(environ, start_response):
+    data = Parser.parse_query_data(environ=environ)
+    match = MatchService.get_match_service(match_uuid=data["uuid"])
+    if match.winner:
+        start_response("303 See Other", [("Location", f"/match-result/?uuid={match.uuid}")])
+        return []
+
+    context = {"match": match.model_dump()}
+    return renderer.render_template(template_name="match-score.html",
+                                    context=context,
+                                    start_response=start_response)
 
 
 @router.post("/match-score/")
-async def update_match_api(request: Request, uuid: str, player_win: Annotated[int, Form()]):
-    try:
-        redirect_url = "match-score"
-        match = await MatchService.update_match_service(match_uuid=uuid, player_win=player_win)
-        if match.winner:
-            redirect_url = "match-result"
-        return RedirectResponse(url=f"/{redirect_url}/?uuid={uuid}", status_code=303)
+@database_error_handler
+def update_match_api(environ, start_response):
+    uuid = Parser.parse_query_data(environ=environ)["uuid"]
+    player_win = int(Parser.parse_form_data(environ=environ)["player_win"])
 
-    except DatabaseNotFoundError as e:
-        return templates.TemplateResponse(name="index.html", context={"request": request, "error": e.message})
-    except DatabaseInternalError as e:
-        raise HTTPException(status_code=500, detail=e.message)
+    redirect_url = "match-score"
+    match = MatchService.update_match_service(match_uuid=uuid, player_win=player_win)
+    if match.winner:
+        redirect_url = "match-result"
+
+    start_response("303 See Other", [("Location", f"/{redirect_url}/?uuid={uuid}")])
+    return []
 
 
 @router.get("/match-result/")
-async def get_match_result_api(request: Request, uuid: str):
-    try:
-        match = await MatchService.get_match_service(match_uuid=uuid)
-        return templates.TemplateResponse(name="match-result.html", context={"request": request, "match": match.dict()})
-    except DatabaseNotFoundError as e:
-        return templates.TemplateResponse(name="index.html", context={"request": request, "error": e.message})
-    except DatabaseInternalError as e:
-        raise HTTPException(status_code=500, detail=e.message)
+@database_error_handler
+def get_match_result_api(environ, start_response):
+    uuid = Parser.parse_query_data(environ=environ)["uuid"]
+    match = MatchService.get_match_service(match_uuid=uuid)
+    return renderer.render_template(template_name="match-result.html",
+                                    context={"match": match.dict()},
+                                    start_response=start_response)
 
 
 @router.get("/matches/")
-async def get_matches_api(request: Request, match_filters: Annotated[GetMatchesRequest, Query()]):
+@database_error_handler
+def get_matches_api(environ, start_response):
+    raw_data = Parser.parse_query_data(environ=environ)
+    match_filters = GetMatchesRequest(**raw_data)
     try:
         if match_filters.filter_by_player_name:
             FieldValidator.validate_name(name=match_filters.filter_by_player_name,
                                          field="Player name")
 
-        matches = await MatchService.get_matches_service(match_filters=match_filters)
-        total_pages = await MatchService.get_matches_pages_service(match_filters=match_filters)
-        response = GetMatchesResponse(matches=matches,
-                                      total_pages=total_pages,
-                                      match_filters=match_filters)
+        matches = MatchService.get_matches_service(match_filters=match_filters)
+        total_pages = MatchService.get_matches_pages_service(match_filters=match_filters)
+        context = GetMatchesResponse(matches=matches,
+                                     total_pages=total_pages,
+                                     match_filters=match_filters)
     except ServiceValidationError as e:
-        response = GetMatchesResponse(match_filters=match_filters,
-                                      error=e.message)
-    except DatabaseInternalError as e:
-        raise HTTPException(status_code=500, detail=e.message)
+        context = GetMatchesResponse(match_filters=match_filters,
+                                     error=e.message)
 
-    return templates.TemplateResponse(name="matches.html",
-                                      context={"request": request, **response.model_dump()})
+    return renderer.render_template(template_name="matches.html",
+                                    context={**context.model_dump()},
+                                    start_response=start_response)

@@ -14,11 +14,3 @@ class ServiceValidationError(ServiceError):
 
 class DatabaseNotFoundError(ServiceError):
     pass
-
-
-class UniqueError(ServiceError):
-    pass
-
-
-class WinnerAlreadyExists(ServiceError):
-    pass

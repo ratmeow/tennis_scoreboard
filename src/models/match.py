@@ -7,7 +7,7 @@ import uuid
 class MatchORM(Base):
     __tablename__ = "matches"
 
-    uuid: Mapped[str] = mapped_column(default=str(uuid.uuid4()))
+    uuid: Mapped[str] = mapped_column(default=lambda: str(uuid.uuid4()))
     player1_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
     player2_id: Mapped[int] = mapped_column(ForeignKey("players.id"))
     winner_id: Mapped[int] = mapped_column(ForeignKey("players.id"), nullable=True)

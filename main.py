@@ -1,4 +1,4 @@
-import uvicorn
+import waitress
+from src.app import app
 
-if __name__ == "__main__":
-    uvicorn.run("src.app:app", host="localhost", port=8080, reload=True)
+waitress.serve(app, host="0.0.0.0", port=8080)

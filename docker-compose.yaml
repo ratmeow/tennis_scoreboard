@@ -1,0 +1,13 @@
+version: '3.9'
+
+services:
+  server:
+    container_name: backend-waitress
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src/data:/tennis_score/src/data:z
+
