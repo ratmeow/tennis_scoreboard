@@ -17,7 +17,11 @@ jinja2 = "^3.1.5"
 
 [tool.poetry.group.dev.dependencies]
 setuptools = "^75.6.0"
+ruff = "^0.9.4"
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+line-length = 100

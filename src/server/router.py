@@ -4,7 +4,7 @@ class Router:
 
     def get(self, path):
         def decorator(func):
-            normalized_path = path.rstrip('/')
+            normalized_path = path.rstrip("/")
             self.routes[("GET", normalized_path)] = func
             return func
 
@@ -12,7 +12,7 @@ class Router:
 
     def post(self, path):
         def decorator(func):
-            normalized_path = path.rstrip('/')
+            normalized_path = path.rstrip("/")
             self.routes[("POST", normalized_path)] = func
             return func
 
@@ -22,7 +22,7 @@ class Router:
         method: str = environ["REQUEST_METHOD"]
         path: str = environ["PATH_INFO"]
 
-        normalized_path = path.rstrip('/')
+        normalized_path = path.rstrip("/")
 
         route = self.routes.get((method, normalized_path))
         if route:

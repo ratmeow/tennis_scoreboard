@@ -6,4 +6,3 @@ class Player(BaseModel):
     name: str
 
     model_config = ConfigDict(from_attributes=True)
-

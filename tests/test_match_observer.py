@@ -1,7 +1,7 @@
 import random
 
-from src.schemas import Score
 from src.match_manager.match_observer import MatchObserver
+from src.schemas.match import Score
 
 
 def test_win_point_at_40_40():
@@ -96,5 +96,3 @@ def test_match_win():
 
     assert new_score.sets == [2, 0]
     assert match_observer.check_winner_exists() is True
-
-

@@ -1,5 +1,6 @@
-from src.dao import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
+
+from src.dao.database import Base
 
 
 class PlayerORM(Base):

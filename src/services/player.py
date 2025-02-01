@@ -1,6 +1,7 @@
-from src.dao import PlayerDAO
 from typing import Optional
-from src.schemas import Player
+
+from src.dao.player import PlayerDAO
+from src.schemas.player import Player
 
 
 class PlayerService:

@@ -11,7 +11,6 @@ class WSGIApp:
         self.middlewares.append(middleware)
 
     def serve_static(self, environ, start_response):
-
         file_path = environ["PATH_INFO"].lstrip("/")  # Убираем '/'
         full_path = os.path.join(self.static_dir, file_path)
 
@@ -30,7 +29,6 @@ class WSGIApp:
         return [b"File not found"]
 
     def __call__(self, environ, start_response):
-
         handler = self.router
         for middleware in reversed(self.middlewares):
             handler = middleware(handler)

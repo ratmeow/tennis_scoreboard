@@ -1,7 +1,9 @@
-from src.dao import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Integer, JSON
 import uuid
+
+from sqlalchemy import JSON, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.dao.database import Base
 
 
 class MatchORM(Base):
@@ -13,6 +15,12 @@ class MatchORM(Base):
     winner_id: Mapped[int] = mapped_column(ForeignKey("players.id"), nullable=True)
     score: Mapped[dict] = mapped_column(JSON)
 
-    player1: Mapped["PlayerORM"] = relationship(foreign_keys=[player1_id], uselist=False, lazy="joined")
-    player2: Mapped["PlayerORM"] = relationship(foreign_keys=[player2_id], uselist=False, lazy="joined")
-    winner: Mapped["PlayerORM"] = relationship(foreign_keys=[winner_id], uselist=False, lazy="joined")
+    player1: Mapped["PlayerORM"] = relationship(
+        foreign_keys=[player1_id], uselist=False, lazy="joined"
+    )
+    player2: Mapped["PlayerORM"] = relationship(
+        foreign_keys=[player2_id], uselist=False, lazy="joined"
+    )
+    winner: Mapped["PlayerORM"] = relationship(
+        foreign_keys=[winner_id], uselist=False, lazy="joined"
+    )

@@ -1,8 +1,10 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+import logging
+
 from sqlalchemy import create_engine
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
+
 from src.config import settings
 from src.utils.exceptions import DatabaseInternalError
-import logging
 
 logger = logging.getLogger(__name__)
 engine = create_engine(url=settings.DB_URL)
@@ -26,6 +28,7 @@ def connection(commit: bool = False):
                     session.close()
 
         return wrapper
+
     return decorator
 
 

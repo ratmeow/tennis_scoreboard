@@ -1,10 +1,12 @@
-from .database import connection
-from sqlalchemy.orm import Session
-from sqlalchemy import select
-from src.models import PlayerORM
+import logging
 from typing import Optional
 
-import logging
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from src.models.player import PlayerORM
+
+from .database import connection
 
 logger = logging.getLogger(__name__)
 

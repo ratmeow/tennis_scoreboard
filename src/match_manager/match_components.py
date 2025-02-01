@@ -7,7 +7,10 @@ class Points:
         self.points = initial_points  # [15, 30]
         self.positions = [0, 0]
         if not tiebreak_mode:
-            self.positions = [self.points_range.index(self.points[0]), self.points_range.index(self.points[1])]
+            self.positions = [
+                self.points_range.index(self.points[0]),
+                self.points_range.index(self.points[1]),
+            ]
 
     def add(self, player_idx):
         if self.tiebreak_mode:
@@ -35,7 +38,10 @@ class Points:
     def _add_tiebreak(self, player_idx):
         opponent_idx = 1 - player_idx
         self.points[player_idx] += 1
-        if self.points[player_idx] >= 7 and (self.points[player_idx] - self.points[opponent_idx]) >= 2:
+        if (
+            self.points[player_idx] >= 7
+            and (self.points[player_idx] - self.points[opponent_idx]) >= 2
+        ):
             self.game_win = True
             return
 
@@ -54,7 +60,6 @@ class Points:
 
 
 class Games:
-
     def __init__(self, initial_games):
         self.set_win: bool = False
         self.games: list[list[int]] = initial_games  # [[6, 1], [0, 4]]
@@ -63,8 +68,10 @@ class Games:
     def add(self, player_idx, tiebreak_win: bool = False):
         opponent_idx = 1 - player_idx
         self.current_game[player_idx] += 1
-        if tiebreak_win or (self.current_game[player_idx] >= 6 and (
-                self.current_game[player_idx] - self.current_game[opponent_idx] >= 2)):
+        if tiebreak_win or (
+            self.current_game[player_idx] >= 6
+            and (self.current_game[player_idx] - self.current_game[opponent_idx] >= 2)
+        ):
             self.set_win = True
             return
 

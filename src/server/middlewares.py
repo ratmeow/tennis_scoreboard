@@ -3,11 +3,9 @@ import logging
 logger = logging.getLogger("middleware")
 
 
-def CORSMiddleware(app,
-                   allow_origins=["*"],
-                   allow_credentials=True,
-                   allow_methods=["*"],
-                   allow_headers=["*"]):
+def CORSMiddleware(
+    app, allow_origins=["*"], allow_credentials=True, allow_methods=["*"], allow_headers=["*"]
+):
     def middleware(environ, start_response):
         headers = [
             ("Access-Control-Allow-Origin", ",".join(allow_origins)),
