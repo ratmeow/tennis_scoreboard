@@ -27,6 +27,18 @@
 ## Примечание
 * При первом запуске проекта создается файл БД в папке data/
 * Также создается файл `package.log`, который будет содержать логи приложения
+* В качестве линтера используется `ruff`. Также он используется для форматирования кода.
+Ниже приведены примеры команд для проверки кода ruff'ом.
+```shell
+ruff check src/ --select I
+ruff check tests/ --select I
+ruff check src/ --ignore F821
+ruff check tests/
+ruff format --check src/
+ruff format --check tests/
+```
+Для автоматического исправления кода для `ruff check` нужно добавить `--fix`.
+Для форматирования кода в `ruff format` нужно убрать флаг `--check`.
 
 ## Preview
 ![Описание изображения](docs/home.png)
@@ -42,16 +54,3 @@
 * jinja2
 * alembic
 * SQLite
-
-В качестве линтера используется `ruff`. Также он используется для форматирования кода.
-Ниже приведены примеры команд для проверки кода ruff'ом.
-```shell
-ruff check src/ --select I
-ruff check tests/ --select I
-ruff check src/ --ignore F821
-ruff check tests/
-ruff format --check src/
-ruff format --check tests/
-```
-Для автоматического исправления кода для `ruff check` нужно добавить `--fix`.
-Для форматирования кода в `ruff format` нужно убрать флаг `--check`.
