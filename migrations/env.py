@@ -2,9 +2,10 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from src.dao import Base
+from src.dao.database import Base
 from src.config import settings
-from src.models import PlayerORM, MatchORM
+from src.models.match import MatchORM
+from src.models.player import PlayerORM
 
 from alembic import context
 
